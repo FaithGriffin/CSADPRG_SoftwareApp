@@ -14,6 +14,7 @@ C Paradigm: Legacy
       PRINT *, ''
       PRINT *, 'Operations:'
       n=editDistance(string1, string2, LENGTH(string1), LENGTH(string2))
+      PRINT *, ' '
       PRINT *, 'Edit Distance: ', n
       END
 
@@ -60,24 +61,26 @@ C Reference:
       CHARACTER*(*) string1, string2
       INTEGER table(nLen1 + 1,nLen2 + 1), nLen1, nLen2, i, j
       
-      i = MAX(nLen1,nLen2)-1
-      j = MAX(nLen1,nLen2)
+      i = nLen1 + 1
+      j = nLen2 + 1
 
       DO 35, WHILE(i .NE. 1 .OR. j .NE. 1)
             IF(string1(i-1:i-1) .EQ. string2(j-1:j-1)) THEN
                   i = i - 1
                   j = j - 1
             ELSE IF(table(i,j) .EQ. table(i-1,j-1)+1) THEN
-      PRINT *,'Replace ',string2(j-1:j-1),' with ',string1(i-1:i-1)
+           PRINT *,'Replace ',string1(i-1:i-1),' with ',string2(j-1:j-1)
                   i = i - 1
                   j = j - 1
+                  PRINT *, "===================="
             ELSE IF(table(i,j) .EQ. table(i,j-1)+1) THEN
                   PRINT *, 'Insert ', string2(j-1:j-1)
                   j = j - 1
+                  PRINT *, "===================="
             ELSE IF(table(i,j) .EQ. table(i-1,j)+1) THEN
-                  PRINT *, 'Delete ', string1(i-1:i-1)
+                  PRINT *, 'Delete ', string2(i-1:i-1)
                   i = i - 1
+                  PRINT *, "===================="
             END IF
 35    CONTINUE
-
       END
