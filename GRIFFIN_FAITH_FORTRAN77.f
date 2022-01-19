@@ -35,12 +35,12 @@ C number of insertions it would take to turn
 C an empty string to the second string
       DO I = 1, LEN1 + 1, 1
             TABLE(1, I) = I-1
-      END DO
+      ENDDO
 C number of deletions it would take to turn the first 
 C string and the extra empty string to an empty string
       DO J = 1, LEN2 + 1, 1
             TABLE(J, 1) = J-1
-      END DO
+      ENDDO
 C Fill out the rest of the lookup table (TABLE) by storing 
 C the smallest edit distance among the yielded edit 
 C distances from the three operations (deletion, insertion, 
@@ -55,9 +55,9 @@ C stored at TABLE[K-1][L-1].
                         TABLE(K,L) = TABLE(K-1, L-1)
                   ELSE
             TABLE(K,L) = MIN(TABLE(K-1,L),TABLE(K,L-1),TABLE(K-1,L-1))+1
-                  END IF
-            END DO
-      END DO
+                  ENDIF
+            ENDDO
+      ENDDO
 C Print the operations (Replace, Insert, Delete) involved in 
 C converting STR1 into STR2.
       CALL PRNTOP(TABLE, STR1, STR2, LEN1, LEN2)
@@ -70,10 +70,10 @@ C since Fortran77 doesn't have LEN_TRIM().
       INTEGER FUNCTION LENGTH(STRING) 
       CHARACTER*(*) STRING
       INTEGER I 
-      DO I = LEN(STRING), 1, -1 
-            IF(STRING(I:I) .NE. ' ') GO TO 25 
-      END DO
-25    LENGTH = I 
+      DO 1, I = LEN(STRING), 1, -1 
+            IF(STRING(I:I) .NE. ' ') GO TO 2 
+1     CONTINUE
+2     LENGTH = I 
       END 
 
 
@@ -108,8 +108,8 @@ C as guided by the lookup table (TABLE).
                   STR1 = DEL(I-1, STR1)
                   CALL PRNTST(STR1, STR2)
                   I = I - 1
-            END IF
-      END DO
+            ENDIF
+      ENDDO
       END
 
 
@@ -134,7 +134,7 @@ C after CHAR has been inserted into it.
       DO WHILE(K .GT. I)
             STR1(K:K) = STR1(K-1:K-1)
             K = K - 1
-      END DO
+      ENDDO
       STR1(I+1:I+1) = CHAR
       INSRT = STR1
       END
@@ -152,7 +152,7 @@ C after deletion of a character has taken place.
             STR1(J:J) = STR1(J+1:J+1)
             K = K - 1
             J = J + 1
-      END DO
+      ENDDO
       STR1(L:L) = ''
       DEL = STR1
       END
