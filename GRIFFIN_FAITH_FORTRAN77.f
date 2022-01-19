@@ -1,132 +1,158 @@
 C Name:     Griffin, Faith Juliamae Orendain
-C Language: Fortran77
+C Language: Fortran (Fortran77)
 C Paradigm: Legacy
 
-      PROGRAM SoftwareApplication
+
+
+      PROGRAM APP
       IMPLICIT NONE
-      CHARACTER*64 string1, string2
-      INTEGER editDistance, n, LENGTH
-      EXTERNAL editDistance, LENGTH
+      CHARACTER*64 STR1, STR2
+      INTEGER DIST, N, LENGTH
+      EXTERNAL DIST, LENGTH
+C Asks for input String from user; it is assumed that input 
+C has no leading nor trailing spaces and inputs are single words
       PRINT *, 'Input string 1 = '
-      READ *, string1
+      READ *, STR1
       PRINT *, 'Input string 2 = '
-      READ *, string2
+      READ *, STR2
       PRINT *, ''
       PRINT *, 'Operations:'
-      n=editDistance(string1, string2, LENGTH(string1), LENGTH(string2))
+C Given two input strings, store the yielded edit distance to a 
+C temporary variable and display it after displaying the operations
+C involved in converting STR1 into STR2.
+      N = DIST(STR1, STR2, LENGTH(STR1), LENGTH(STR2))
       PRINT *, ' '
-      PRINT *, 'Edit Distance: ', n
+      PRINT *, 'Edit Distance: ', N
       END
 
-C
-C
-      INTEGER FUNCTION editDistance(string1, string2, nLen1, nLen2)
-      CHARACTER*(*) string1, string2
-      INTEGER nLen1, nLen2, table(nLen1 + 1,nLen2 + 1)
-      DO i = 1, nLen1 + 1, 1
-            table(1, i) = i-1
+
+C This function computes the minimum number of single-character
+C edits to convert STR1 into STR2.
+      INTEGER FUNCTION DIST(STR1, STR2, LEN1, LEN2)
+      CHARACTER*(*) STR1, STR2
+      INTEGER LEN1, LEN2, TABLE(LEN1 + 1,LEN2 + 1), I, J, K, L
+C number of insertions it would take to turn
+C an empty string to the second string
+      DO I = 1, LEN1 + 1, 1
+            TABLE(1, I) = I-1
       END DO
-      DO j = 1, nLen2 + 1, 1
-            table(j, 1) = j-1
+C number of deletions it would take to turn the first 
+C string and the extra empty string to an empty string
+      DO J = 1, LEN2 + 1, 1
+            TABLE(J, 1) = J-1
       END DO
-      
-      DO k = 2, nLen1 + 1, 1
-            DO l = 2, nLen2 + 1, 1
-                  IF(string1(k-1:k-1) .EQ. string2(l-1:l-1)) THEN
-                        table(k,l) = table(k-1,l-1)
+C Fill out the rest of the lookup table (TABLE) by storing 
+C the smallest edit distance among the yielded edit 
+C distances from the three operations (deletion, insertion, 
+C and substitution) plus one; since the cost of each 
+C operation is one. If the characters from the two strings 
+C are similar, there would be no need for the aforementioned 
+C process, rather, TABLE[K][L] would store the edit distance 
+C stored at TABLE[K-1][L-1].
+      DO K = 2, LEN1 + 1, 1
+            DO L = 2, LEN2 + 1, 1
+                  IF(STR1(K-1:K-1) .EQ. STR2(L-1:L-1)) THEN
+                        TABLE(K,L) = TABLE(K-1, L-1)
                   ELSE
-            table(k,l) = MIN(table(k-1,l),table(k,l-1),table(k-1,l-1))+1
+            TABLE(K,L) = MIN(TABLE(K-1,L),TABLE(K,L-1),TABLE(K-1,L-1))+1
                   END IF
             END DO
       END DO
-
-      CALL printOperations(table, string1, string2, nLen1, nLen2)
-      editDistance = table(nLen1 + 1,nLen2 + 1)
+C Print the operations (Replace, Insert, Delete) involved in 
+C converting STR1 into STR2.
+      CALL PRNTOP(TABLE, STR1, STR2, LEN1, LEN2)
+      DIST = TABLE(LEN1 + 1, LEN2 + 1)
       END
 
-C Returns length of string ignoring trailing blanks 
-C since Fortran77 doesn't have LEN_TRIM()
-C Reference: 
+
+C Returns length of STRING ignoring trailing blanKs 
+C since Fortran77 doesn't have LEN_TRIM().
       INTEGER FUNCTION LENGTH(STRING) 
-      CHARACTER*(*) STRING 
+      CHARACTER*(*) STRING
+      INTEGER I 
       DO I = LEN(STRING), 1, -1 
             IF(STRING(I:I) .NE. ' ') GO TO 25 
       END DO
 25    LENGTH = I 
       END 
 
-C 
-C 
-C Reference:
-      SUBROUTINE printOperations(table, string1, string2, nLen1, nLen2)
-      CHARACTER*(*) string1, string2
-      CHARACTER*64 insert, delete
-      EXTERNAL insert, delete
-      INTEGER table(nLen1 + 1,nLen2 + 1), nLen1, nLen2, i, j
+
+C When called, this subroutine prints the operations involved in 
+C converting STR1 into STR2 and the form of STR1 after every edit, 
+C as guided by the lookup table (TABLE).
+      SUBROUTINE PRNTOP(TABLE, STR1, STR2, LEN1, LEN2)
+      CHARACTER*(*) STR1, STR2
+      CHARACTER*64 INSRT, DEL
+      EXTERNAL INSRT, DEL
+      INTEGER TABLE(LEN1 + 1, LEN2 + 1), LEN1, LEN2, I, J
       
-      i = nLen1 + 1
-      j = nLen2 + 1
-      DO WHILE(i .NE. 1 .OR. j .NE. 1)
-            IF(string1(i-1:i-1) .EQ. string2(j-1:j-1)) THEN
-                  i = i - 1
-                  j = j - 1
-            ELSE IF(table(i,j) .EQ. table(i-1,j-1)+1) THEN
-           PRINT *,'Replace ',string1(i-1:i-1),' with ',string2(j-1:j-1)
-                  string1(i-1:i-1) = string2(j-1:j-1)
-                  CALL printStrings(string1, string2)
-                  i = i - 1
-                  j = j - 1
-            ELSE IF(table(i,j) .EQ. table(i,j-1)+1) THEN
-                  PRINT *, 'Insert ', string2(j-1:j-1)
-                  string1 = insert(i-1,string1,string2(j-1:j-1))
-                  CALL printStrings(string1, string2)
-                  j = j - 1
-            ELSE IF(table(i,j) .EQ. table(i-1,j)+1) THEN
-                  PRINT *, 'Delete ', string1(i-1:i-1)
-                  string1 = delete(i-1,string1)
-                  CALL printStrings(string1, string2)
-                  i = i - 1
+      I = LEN1 + 1
+      J = LEN2 + 1
+      DO WHILE(I .NE. 1 .OR. J .NE. 1)
+            IF(STR1(I-1:I-1) .EQ. STR2(J-1:J-1)) THEN
+                  I = I - 1
+                  J = J - 1
+            ELSE IF(TABLE(I,J) .EQ. TABLE(I-1,J-1)+1) THEN
+           PRINT *,'=>Replace ',STR1(i-1:i-1),' with ',STR2(J-1:J-1)
+                  STR1(I-1:I-1) = STR2(J-1:J-1)
+                  CALL PRNTST(STR1, STR2)
+                  I = I - 1
+                  J = J - 1
+            ELSE IF(TABLE(I,J) .EQ. TABLE(I,J-1)+1) THEN
+                  PRINT *, '=>Insert ', STR2(J-1:J-1)
+                  STR1 = INSRT(I-1, STR1, STR2(J-1:J-1))
+                  CALL PRNTST(STR1, STR2)
+                  J = J - 1
+            ELSE IF(TABLE(I,J) .EQ. TABLE(I-1,J)+1) THEN
+                  PRINT *, '=>Delete ', STR1(I-1:I-1)
+                  STR1 = DEL(I-1, STR1)
+                  CALL PRNTST(STR1, STR2)
+                  I = I - 1
             END IF
       END DO
       END
 
-C
-C
-      SUBROUTINE printStrings(string1, string2)
-      CHARACTER*(*) string1, string2
-      PRINT *, string1
-      PRINT *, string2
+
+C When called, this subroutine prints the the current form of 
+C STR1 after every single-character edit done in order for it 
+C to be converted to STR2.
+      SUBROUTINE PRNTST(STR1, STR2)
+      CHARACTER*(*) STR1, STR2
+      PRINT *, STR1
+      PRINT *, STR2
       PRINT *, "===================="
       END
 
-C
-C
-      CHARACTER*64 FUNCTION insert(i, string1, char)
-      INTEGER i, k
-      CHARACTER*(*) string1
-      CHARACTER char
-      k = LENGTH(string1) + 1
-      DO WHILE(k .GT. i)
-            string1(k:k) = string1(k-1:k-1)
-            k = k - 1
+
+C This function returns the updated form of STR1 
+C after CHAR has been inserted into it.
+      CHARACTER*64 FUNCTION INSRT(I, STR1, CHAR)
+      INTEGER I, K
+      CHARACTER*(*) STR1
+      CHARACTER CHAR
+      K = LENGTH(STR1) + 1
+      DO WHILE(K .GT. I)
+            STR1(K:K) = STR1(K-1:K-1)
+            K = K - 1
       END DO
-      string1(i+1:i+1) = char
-      insert = string1
+      STR1(I+1:I+1) = CHAR
+      INSRT = STR1
       END
 
-C
-C
-      CHARACTER*64 FUNCTION delete(i, string1)
-      INTEGER i, j, k, l
-      CHARACTER*(*) string1
-      k = LENGTH(string1)
-      l = LENGTH(string1)
-      j = i
-      DO WHILE(k .GT. i)
-            string1(j:j) = string1(j+1:j+1)
-            k = k - 1
-            j = j + 1
+
+C This function returns the updated form of STR1
+C after deletion of a character has taken place.
+      CHARACTER*64 FUNCTION DEL(I, STR1)
+      INTEGER I, J, K, L
+      CHARACTER*(*) STR1
+      K = LENGTH(STR1)
+      l = LENGTH(STR1)
+      J = I
+      DO WHILE(K .GT. I)
+            STR1(J:J) = STR1(J+1:J+1)
+            K = K - 1
+            J = J + 1
       END DO
-      string1(l:l) = ''
-      delete = string1
+      STR1(L:L) = ''
+      DEL = STR1
       END
