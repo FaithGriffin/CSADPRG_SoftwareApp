@@ -1,0 +1,2 @@
+(base) faith@Faith:/mnt/c/Users/Faith/OneDrive/Documents/DLSU-4th Term/CSADPRG/CSADPRG_SoftwareApp$ f77 GRIFFIN_FAITH_FORTRAN77.f -o GRIFFIN_FAITH_FORTRAN77.out
+(base) faith@Faith:/mnt/c/Users/Faith/OneDrive/Documents/DLSU-4th Term/CSADPRG/CSADPRG_SoftwareApp$ ./GRIFFIN_FAITH_FORTRAN77.out

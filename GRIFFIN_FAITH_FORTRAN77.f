@@ -30,7 +30,7 @@ C This function computes the minimum number of single-character
 C edits to convert STR1 into STR2.
       INTEGER FUNCTION DIST(STR1, STR2, LEN1, LEN2)
       CHARACTER*(*) STR1, STR2
-      INTEGER LEN1, LEN2, TABLE(LEN1 + 1,LEN2 + 1), I, J, K, L
+      INTEGER LEN1, LEN2, TABLE(LEN1 + 1, LEN2 + 1), I, J, K, L
 C number of insertions it would take to turn
 C an empty string to the second string
       DO I = 1, LEN1 + 1, 1
@@ -65,7 +65,7 @@ C converting STR1 into STR2.
       END
 
 
-C Returns length of STRING ignoring trailing blanKs 
+C Returns length of STRING ignoring trailing blanks 
 C since Fortran77 doesn't have LEN_TRIM().
       INTEGER FUNCTION LENGTH(STRING) 
       CHARACTER*(*) STRING
@@ -113,9 +113,9 @@ C as guided by the lookup table (TABLE).
       END
 
 
-C When called, this subroutine prints the the current form of 
+C When called, this subroutine prints the current form of 
 C STR1 after every single-character edit done in order for it 
-C to be converted to STR2.
+C to be converted to STR2. It also prints STR2 for guidance.
       SUBROUTINE PRNTST(STR1, STR2)
       CHARACTER*(*) STR1, STR2
       PRINT *, STR1
