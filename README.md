@@ -1,7 +1,8 @@
 <h1 align="center">
 Final Machine Project in CSADPRG 
 
-(Advanced Programming and Theory of Programming Languages)
+(Advanced Programming and 
+Theory of Programming Languages)
 
 <img src="Screenshots/4.1SampleOutput.png" width="200px"></h1>
 
