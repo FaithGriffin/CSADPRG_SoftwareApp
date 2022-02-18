@@ -16,7 +16,9 @@ Theory of Programming Languages)
     
    - Aside from having the minimum edit distance as output, the Software Application also included the feature of printing out the 
         specific operations used as the minimum edit distance was being computed and it also prints the strings as the different 
-        operations were being applied. 
+        operations were being applied.
+ 
+   - Implemented using Fortran (Fortran 77).
 
 💻**To run**:
 
