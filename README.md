@@ -6,8 +6,7 @@ Theory of Programming Languages)
 
 <img src="Screenshots/4.1SampleOutput.png" width="200px"></h1>
 
-📝**About**:
-   - Finds the minimum edit distance given two input strings.     
+📝**About**:   
    - The two strings need not be of the same lengths and the operations involving single-character edits include 
         deletion, insertion, and substitution; all of which had equal costs which is one, based on the machine project’s specifications.     
    - A dynamic programming approach was used to compute for the minimum edit distance.     
